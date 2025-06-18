@@ -1,4 +1,4 @@
-const stripe = Stripe('pk_test_51MwfEuAAEPgBtL4yo6bxzh8EaMy8VWkUXeNYYS3e23eQ6ReO4LSZabuGqH5MI9bEne0lXNjHn5HRu5pISVDAhaXt008vq0knOw');
+const stripe = Stripe('pk_test_51RZnWOHHR2LprZysTbDB6PXYgemVCJd3T6Lqid3Q4Tc4ajJAGnosUqX0Cyq8BlO2QNYrt9BvyIwOgcwYtyNSFsrh005NKeZUeH');
 const paymentButton = document.querySelector('#paymentButton');
 
 paymentButton.addEventListener('click', () => {
