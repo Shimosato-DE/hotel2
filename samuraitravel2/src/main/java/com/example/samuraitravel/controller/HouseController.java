@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.samuraitravel.entity.House;
+import com.example.samuraitravel.form.ReservationInputForm;
 import com.example.samuraitravel.repository.HouseRepository;
 
 @Controller
@@ -32,13 +33,22 @@ public class HouseController {
                         Model model) 
     {
         Page<House> housePage;
-                
-        if (keyword != null && !keyword.isEmpty()) {            
+        
+        //キーワードが空ではないか。空でなければ処理。
+        if (keyword != null && !keyword.isEmpty()) {
+        	
+        	//orderが空ではなく、priseAscか
             if (order != null && order.equals("priceAsc")) {
+            	
+            	//空でなく、priceAscであれば、名前・住所部分一致検索/最安順
                 housePage = houseRepository.findByNameLikeOrAddressLikeOrderByPriceAsc("%" + keyword + "%", "%" + keyword + "%", pageable);
             } else {
+            	
+            	//条件を満たしていない場合、名前・住所部分一致検索/新着順
                 housePage = houseRepository.findByNameLikeOrAddressLikeOrderByCreatedAtDesc("%" + keyword + "%", "%" + keyword + "%", pageable);
-            }            
+            }
+          
+          //以下上記と同じような分岐を繰り返す
         } else if (area != null && !area.isEmpty()) {            
             if (order != null && order.equals("priceAsc")) {
                 housePage = houseRepository.findByAddressLikeOrderByPriceAsc("%" + area + "%", pageable);
@@ -50,15 +60,22 @@ public class HouseController {
                 housePage = houseRepository.findByPriceLessThanEqualOrderByPriceAsc(price, pageable);
             } else {
                 housePage = houseRepository.findByPriceLessThanEqualOrderByCreatedAtDesc(price, pageable);
-            }            
-        } else {            
+            }
+            
+          //空であれば全件検索
+        } else {
+        	
             if (order != null && order.equals("priceAsc")) {
+            	//最安順
                 housePage = houseRepository.findAllByOrderByPriceAsc(pageable);
+            
             } else {
+            	//新着順
                 housePage = houseRepository.findAllByOrderByCreatedAtDesc(pageable);   
             }            
         }                
         
+        //各項目をViewへ返す
         model.addAttribute("housePage", housePage);
         model.addAttribute("keyword", keyword);
         model.addAttribute("area", area);
@@ -68,12 +85,13 @@ public class HouseController {
         return "houses/index";
     }
     
+    
     @GetMapping("/{id}")
     public String show(@PathVariable(name = "id") Integer id, Model model) {
         House house = houseRepository.getReferenceById(id);
         
         model.addAttribute("house", house);  
-        //model.addAttribute("reservationInputForm", new ReservationInputForm());
+        model.addAttribute("reservationInputForm", new ReservationInputForm());
         
         return "houses/show";
     }    
