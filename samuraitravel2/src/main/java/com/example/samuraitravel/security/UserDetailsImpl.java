@@ -7,15 +7,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.samuraitravel.entity.User;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public class UserDetailsImpl implements UserDetails {
+	
+	//Userエンティティを格納する
     private final User user;
+    
+    //ロールを格納する
     private final Collection<GrantedAuthority> authorities;
     
-    public UserDetailsImpl(User user, Collection<GrantedAuthority> authorities) {
-        this.user = user;
-        this.authorities = authorities;
-    }
     
+    //ユーザ情報を返す
     public User getUser() {
         return user;
     }

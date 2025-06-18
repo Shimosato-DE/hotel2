@@ -31,7 +31,9 @@ public class UserController {
     }    
     
     @GetMapping
-    public String index(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, Model model) {         
+    //@AuthenticationPrincipal:現在認証しているユーザの情報がUserDetailsImplオブジェクトとして引数に渡される。
+    //
+    public String index(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, Model model) {
         User user = userRepository.getReferenceById(userDetailsImpl.getUser().getId());  
         
         model.addAttribute("user", user);
