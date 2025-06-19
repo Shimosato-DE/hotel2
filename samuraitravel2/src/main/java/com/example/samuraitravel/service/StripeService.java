@@ -1,5 +1,8 @@
 package com.example.samuraitravel.service;
 
+import java.util.Map;
+import java.util.Optional;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -8,8 +11,11 @@ import org.springframework.stereotype.Service;
 import com.example.samuraitravel.form.ReservationRegisterForm;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
+import com.stripe.model.Event;
+import com.stripe.model.StripeObject;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
+import com.stripe.param.checkout.SessionRetrieveParams;
 
 import lombok.RequiredArgsConstructor;
 
@@ -69,6 +75,29 @@ public class StripeService {
 			return "";
 
 		}
+	}
+
+	public void proccessSessionCompleted(Event event) {
+
+		Optional<StripeObject> optionalStripeObject = event.getDataObjectDeserializer().getObject();
+
+		optionalStripeObject.ifPresent(stripeObject -> {
+
+			Session session = (Session) stripeObject;
+			SessionRetrieveParams params = SessionRetrieveParams.builder().addExpand("payment_intent").build();
+
+			try {
+				session = Session.retrieve(session.getId(), params, null);
+				Map<String, String> paymentIntentObject = session.getPaymentIntentObject().getMetadata();
+				System.out.println("登録情報:" + paymentIntentObject);
+				reservationService.create(paymentIntentObject);
+
+			} catch (StripeException e) {
+				e.printStackTrace();
+				
+			}
+
+		});
 	}
 
 }
